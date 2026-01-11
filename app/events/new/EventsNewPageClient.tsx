@@ -98,6 +98,15 @@ export default function NewEventPage() {
 
   if (authLoading) return <div className="min-h-screen bg-[#202124]" />;
 
+  const openTasks = () => router.push('/tasks');
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    const next = `/events/new?date=${encodeURIComponent(date)}`;
+    router.replace(`/login?next=${encodeURIComponent(next)}`);
+    router.refresh();
+  };
+
   return (
     <div className="min-h-screen bg-[#202124] text-[#e8eaed]">
       <SidebarDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onLogout={logout} />
@@ -207,11 +216,6 @@ export default function NewEventPage() {
           </div>
 
           <div className="mt-4 rounded-2xl border p-3">
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-bold">하루종일</div>
-              <input type="checkbox" checked={isAllDay} onChange={(e) => setIsAllDay(e.target.checked)} className="h-4 w-4 accent-white" />
-            </div>
-
             {!isAllDay && (
               <div className="mt-3">
                 <label className="text-sm font-bold">시작 시간</label>

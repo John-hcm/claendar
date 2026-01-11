@@ -3,12 +3,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import SidebarDrawer from '@/components/SidebarDrawer';
+import TopBar from '@/components/TopBar';
+import { supabase } from '@/lib/supabaseClient';
 import { ymd } from '@/lib/date';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { EntryCategory, fetchCategories, createCategory, createDailyEntry } from '@/lib/db';
 
 export default function NewEntryPage() {
   const router = useRouter();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const sp = useSearchParams();
 
   const date = sp.get('date') ?? ymd(new Date());
@@ -97,17 +101,28 @@ const save = async () => {
 
   if (authLoading) return <div className="min-h-screen bg-[#202124]" />;
 
+  const openTasks = () => router.push('/tasks');
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    const next = `/entries/new?date=${encodeURIComponent(date)}`;
+    router.replace(`/login?next=${encodeURIComponent(next)}`);
+    router.refresh();
+  };
+
   return (
     <div className="min-h-screen bg-[#202124] px-3 py-5 text-[#e8eaed]">
-      <div className="mx-auto w-full max-w-[1400px]">
-        <div className="flex items-center justify-between">
-          <Link href={`/day?date=${encodeURIComponent(date)}`} className="text-sm font-bold underline">
-            ◀ 뒤로
-          </Link>
-          <div className="text-lg font-extrabold">새 기록</div>
-          <div className="w-[74px]" />
-        </div>
+      <SidebarDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onLogout={logout} />
+      <TopBar
+        mode=\"title\"
+        title={'새 기록'}
+        subtitle={`날짜: ${date}`}
+        onOpenDrawer={() => setDrawerOpen(true)}
+        onOpenTasks={openTasks}
+        onLogout={logout}
+      />
 
+      <div className="mx-auto w-full max-w-[900px] px-3 pb-20 pt-4">
         <div className="mt-4 rounded-3xl bg-[#202124] border border-[#3c4043] p-4 text-[#e8eaed]">
           <div className="text-sm font-bold">날짜</div>
           <div className="mt-1 text-sm text-[#e8eaed]/70">{date}</div>

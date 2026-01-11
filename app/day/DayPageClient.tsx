@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
+import SidebarDrawer from '@/components/SidebarDrawer';
+import TopBar from '@/components/TopBar';
+import { supabase } from '@/lib/supabaseClient';
 import { lunarLabelFromSolarYmd, parseYmd, ymd } from '@/lib/date';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import {
@@ -19,6 +22,7 @@ import {
 export default function DayPageClient() {
   const sp = useSearchParams();
   const router = useRouter();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const dateStr = sp.get('date') ?? ymd(new Date());
   const date = useMemo(() => parseYmd(dateStr), [dateStr]);
 
@@ -69,6 +73,15 @@ export default function DayPageClient() {
 
   if (authLoading) return <div className="min-h-screen bg-[#202124]" />;
 
+  const openTasks = () => router.push('/tasks');
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    const next = `/day?date=${encodeURIComponent(dateStr)}`;
+    router.replace(`/login?next=${encodeURIComponent(next)}`);
+    router.refresh();
+  };
+
   const openNewEntry = () => router.push(`/entries/new?date=${encodeURIComponent(dateStr)}`);
   const openNewEvent = () => router.push(`/events/new?date=${encodeURIComponent(dateStr)}`);
   const openEditEntry = (id: string) => router.push(`/entries/edit?id=${encodeURIComponent(id)}`);
@@ -98,15 +111,17 @@ export default function DayPageClient() {
 
   return (
     <div className="min-h-screen bg-[#202124] px-3 py-5 text-[#e8eaed]">
-      <div className="mx-auto w-full max-w-[1400px]">
-        <div className="flex items-center justify-between">
-          <Link href="/calendar" className="text-sm font-bold underline">
-            ◀ 캘린더
-          </Link>
-          <div className="text-lg font-extrabold">{dateStr}</div>
-          <div className="w-[74px]" />
-        </div>
+      <SidebarDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onLogout={logout} />
+      <TopBar
+        mode=\"title\"
+        title={dateStr}
+        subtitle={`음력(참고): ${lunarLabelFromSolarYmd(dateStr)}`}
+        onOpenDrawer={() => setDrawerOpen(true)}
+        onOpenTasks={openTasks}
+        onLogout={logout}
+      />
 
+      <div className="mx-auto w-full max-w-[900px] px-3 pb-20 pt-4">
         <div className="mt-1 text-center text-sm text-[#e8eaed]/70">음력(참고): {lunarLabelFromSolarYmd(dateStr)}</div>
 
         <div className="mt-3 flex justify-end gap-2">

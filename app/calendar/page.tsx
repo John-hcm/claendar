@@ -23,6 +23,7 @@ import {
 } from '@/lib/db';
 import { supabase } from '@/lib/supabaseClient';
 import SidebarDrawer from '@/components/SidebarDrawer';
+import TopBar from '@/components/TopBar';
 
 const DOW_KR = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -141,28 +142,6 @@ export default function CalendarPage() {
       mounted = false;
     };
   }, [userId, startYmd, endYmd]);
-
-  const goPrevMonth = () => {
-    const next = addMonths(year, month0, -1);
-    setYear(next.year);
-    setMonth0(next.month0);
-    setSelectedDate(new Date(next.year, next.month0, 1));
-  };
-
-  const goNextMonth = () => {
-    const next = addMonths(year, month0, +1);
-    setYear(next.year);
-    setMonth0(next.month0);
-    setSelectedDate(new Date(next.year, next.month0, 1));
-  };
-
-  const goToday = () => {
-    const t = new Date();
-    setYear(t.getFullYear());
-    setMonth0(t.getMonth());
-    setSelectedDate(t);
-    router.push(`/day?date=${encodeURIComponent(ymd(t))}`);
-  };
 
   const openNewEntry = () => router.push(`/entries/new?date=${encodeURIComponent(ymd(selectedDate))}`);
   const openNewEvent = () => router.push(`/events/new?date=${encodeURIComponent(ymd(selectedDate))}`);
