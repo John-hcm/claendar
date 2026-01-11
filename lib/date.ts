@@ -28,10 +28,13 @@ export type DayCell = {
 
 export function getMonthGrid(year: number, month0: number): DayCell[] {
   // month0: 0=Jan
+  // ✅ Google Calendar(모바일)처럼 "월요일 시작" 그리드
+  // JS getDay(): 0=일 ... 6=토
+  // 월요일 시작 offset: (dow + 6) % 7  => 0=월 ... 6=일
   const first = new Date(year, month0, 1);
-  const startDow = first.getDay(); // 0=Sun
-  // 42칸(6주) 시작일: 해당 달 1일에서 (요일)만큼 뒤로
-  const start = new Date(year, month0, 1 - startDow);
+  const startDowMon = (first.getDay() + 6) % 7;
+  // 42칸(6주) 시작일: 해당 달 1일에서 (월요일기준 요일)만큼 뒤로
+  const start = new Date(year, month0, 1 - startDowMon);
 
   const cells: DayCell[] = [];
   for (let i = 0; i < 42; i++) {

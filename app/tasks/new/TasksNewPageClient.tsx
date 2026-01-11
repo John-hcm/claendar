@@ -28,9 +28,17 @@ export default function TasksNewPageClient() {
   }, [date]);
 
   const logout = async () => {
-    await supabase.auth.signOut();
-    router.replace('/login?next=%2Ftasks');
-    router.refresh();
+    try {
+      await (supabase.auth.signOut as any)({ scope: 'local' });
+    } catch {
+      // ignore
+    }
+    try {
+      window.localStorage.setItem('calio_next', '/tasks');
+    } catch {
+      // ignore
+    }
+    window.location.href = '/login';
   };
 
   const goBack = () => {
@@ -115,6 +123,18 @@ export default function TasksNewPageClient() {
                 />
                 <path
                   d="M14 12H3m0 0 3-3m-3 3 3 3"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M20 5v14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M20 5h-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M20 19h-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M13 12H7m0 0 3-3M7 12l3 3"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"

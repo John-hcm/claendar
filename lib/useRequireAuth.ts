@@ -9,6 +9,19 @@ export function useRequireAuth(nextPath: string) {
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const goLogin = (path: string) => {
+    // ✅ /login?next=... 대신 localStorage에 next를 저장하고 /login으로 이동
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('calio_next', path);
+      }
+    } catch {
+      // ignore
+    }
+
+    router.replace('/login');
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -18,7 +31,7 @@ export function useRequireAuth(nextPath: string) {
 
       const uid = data.user?.id ?? null;
       if (!uid) {
-        router.replace(`/login?next=${encodeURIComponent(nextPath)}`);
+        goLogin(nextPath);
         return;
       }
       setUserId(uid);
@@ -30,7 +43,7 @@ export function useRequireAuth(nextPath: string) {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       const uid = session?.user?.id ?? null;
       if (!uid) {
-        router.replace(`/login?next=${encodeURIComponent(nextPath)}`);
+        goLogin(nextPath);
       } else {
         setUserId(uid);
         setLoading(false);

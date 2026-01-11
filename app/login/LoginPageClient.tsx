@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../lib/supabaseClient'; // ✅ alias(@/) 제거, 상대경로로 수정
@@ -8,7 +8,22 @@ import { supabase } from '../../lib/supabaseClient'; // ✅ alias(@/) 제거, �
 export default function LoginPage() {
   const router = useRouter();
   const sp = useSearchParams();
-  const next = sp.get('next') ?? '/calendar';
+  const nextFromQuery = sp.get('next');
+  const [next, setNext] = useState<string>(nextFromQuery ?? '/calendar');
+
+  useEffect(() => {
+    // ✅ 쿼리(next)가 없으면, 보호 라우팅에서 저장한 localStorage 값을 사용
+    if (nextFromQuery) {
+      setNext(nextFromQuery);
+      return;
+    }
+    try {
+      const saved = window.localStorage.getItem('calio_next');
+      if (saved) setNext(saved);
+    } catch {
+      // ignore
+    }
+  }, [nextFromQuery]);
 
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
@@ -29,7 +44,14 @@ export default function LoginPage() {
       return;
     }
 
-    router.replace(next);
+    try {
+      window.localStorage.removeItem('calio_next');
+    } catch {
+      // ignore
+    }
+
+    // ✅ 로그인 후 이동은 항상 캘린더로 (경로 꼬임/404 방지)
+    router.replace('/calendar');
     router.refresh();
   };
 

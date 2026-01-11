@@ -7,7 +7,8 @@ import { supabase } from '../../../lib/supabaseClient';
 export default function AuthCallbackPage() {
   const router = useRouter();
   const sp = useSearchParams();
-  const next = sp.get('next') ?? '/calendar';
+  const rawNext = sp.get('next');
+  const next = rawNext && rawNext.startsWith('/') ? rawNext : '/calendar';
 
   const [msg, setMsg] = useState('인증 처리 중...');
 
@@ -24,7 +25,12 @@ export default function AuthCallbackPage() {
       if (err) {
         setMsg(`인증 실패: ${decodeURIComponent(errDesc ?? err)}`);
         // 실패면 로그인으로 보내는 게 안전
-        setTimeout(() => router.replace(`/login?next=${encodeURIComponent(next)}`), 1200);
+        try {
+          window.localStorage.setItem('calio_next', next);
+        } catch {
+          // ignore
+        }
+        setTimeout(() => router.replace('/login'), 1200);
         return;
       }
 
@@ -39,7 +45,12 @@ export default function AuthCallbackPage() {
 
       // 세션이 없다면(메일 링크 설정/상태에 따라) 로그인 페이지로 유도
       setMsg('인증은 완료되었지만 세션이 없습니다. 로그인으로 이동합니다...');
-      setTimeout(() => router.replace(`/login?next=${encodeURIComponent(next)}`), 1200);
+      try {
+        window.localStorage.setItem('calio_next', next);
+      } catch {
+        // ignore
+      }
+      setTimeout(() => router.replace('/login'), 1200);
     };
 
     run();
