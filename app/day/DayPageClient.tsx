@@ -98,7 +98,7 @@ export default function DayPageClient() {
 
   return (
     <div className="min-h-screen bg-[#202124] px-3 py-5 text-[#e8eaed]">
-      <div className="mx-auto w-full max-w-[900px]">
+      <div className="mx-auto w-full max-w-[1400px]">
         <div className="flex items-center justify-between">
           <Link href="/calendar" className="text-sm font-bold underline">
             ◀ 캘린더

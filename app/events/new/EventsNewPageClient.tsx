@@ -103,7 +103,7 @@ export default function NewEventPage() {
       <SidebarDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onLogout={logout} />
       {/* Top bar (Google Calendar 스타일) */}
       <div className="sticky top-0 z-10 border-b border-[#3c4043] bg-[#202124]">
-        <div className="mx-auto flex w-full max-w-[900px] items-center justify-between px-3 py-2">
+        <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-3 py-2">
           <div className="flex items-center gap-2 min-w-0">
             <button
               type="button"
@@ -162,7 +162,7 @@ export default function NewEventPage() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[900px] px-3 py-5">
+      <div className="mx-auto w-full max-w-[1400px] px-3 py-5">
         <div className="mt-1 rounded-3xl bg-[#202124] border border-[#3c4043] p-4 text-[#e8eaed]">
           <div className="text-sm font-bold">날짜</div>
           <input type="date" value={solarDate} onChange={(e) => setSolarDate(e.target.value)} className={INPUT} />
