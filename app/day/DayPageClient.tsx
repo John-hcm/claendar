@@ -113,7 +113,7 @@ export default function DayPageClient() {
     <div className="min-h-screen bg-[#202124] px-3 py-5 text-[#e8eaed]">
       <SidebarDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onLogout={logout} />
       <TopBar
-        mode=\"title\"
+        mode="title"
         title={dateStr}
         subtitle={`음력(참고): ${lunarLabelFromSolarYmd(dateStr)}`}
         onOpenDrawer={() => setDrawerOpen(true)}

@@ -98,15 +98,6 @@ export default function NewEventPage() {
 
   if (authLoading) return <div className="min-h-screen bg-[#202124]" />;
 
-  const openTasks = () => router.push('/tasks');
-
-  const logout = async () => {
-    await supabase.auth.signOut();
-    const next = `/events/new?date=${encodeURIComponent(date)}`;
-    router.replace(`/login?next=${encodeURIComponent(next)}`);
-    router.refresh();
-  };
-
   return (
     <div className="min-h-screen bg-[#202124] text-[#e8eaed]">
       <SidebarDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onLogout={logout} />

@@ -133,15 +133,6 @@ export default function EditEventPage() {
 
   if (authLoading) return <div className="min-h-screen bg-[#202124]" />;
 
-  const openTasks = () => router.push('/tasks');
-
-  const logout = async () => {
-    await supabase.auth.signOut();
-    const next = `/events/edit?id=${encodeURIComponent(id)}`;
-    router.replace(`/login?next=${encodeURIComponent(next)}`);
-    router.refresh();
-  };
-
   const backDate = event?.solar_date ?? solarDate;
 
   return (
